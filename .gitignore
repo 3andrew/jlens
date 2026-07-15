@@ -16,3 +16,6 @@ checkpoints/
 
 # Misc
 .DS_Store
+
+# Raw run outputs live only on the machine that produced them
+results/raw/
