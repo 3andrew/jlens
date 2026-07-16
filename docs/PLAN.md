@@ -59,9 +59,10 @@ regenerated from raw outputs by notebooks, never hand-edited.
 
 ## Phases
 
-### Phase 0 — scaffolding (local) ✅ / in progress
-uv project, package skeleton, this plan. Gate: `pytest` runs a hook + estimator
-shape test on a tiny model, on CPU.
+### Phase 0 — scaffolding (local) ✅ done
+uv project, package skeleton, this plan. Gate passed: 10 CPU tests — hook
+capture/gradient flow on a tiny model, estimator convergence against a known
+Jacobian (all production shapes + bf16), checkpoint roundtrip.
 
 ### Phase 1 — J_l estimation (the instrument)
 Stochastic estimator: freeze weights; one backward from v^T h_final per probe

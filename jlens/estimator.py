@@ -28,15 +28,15 @@ class JEstimator:
         grads: layer index -> gradient tensor of shape (..., d), where every
         leading position (batch element x sequence position) is one rank-1
         sample paired with the probe.
-
-        TODO(andrew): the heart of the method — turn E[v g^T] = J into code.
-        Broadcast v against each grad, flatten both to (N, d), and fold the
-        N outer products into self.accum[l] (hint: they sum to a single
-        matmul), bumping self.count[l] by N. Move tensors to CPU fp32 before
-        accumulating. tests/test_estimator.py defines the contract; remove
-        its xfail marker when you implement this.
         """
-        raise NotImplementedError
+        for layer in grads:
+            g = grads[layer]
+            V = v.broadcast_to(g.shape).reshape(-1, self.d)
+            G = g.reshape(-1, self.d).float()
+            N = G.size()[0]
+            acc = V.float().transpose(0, 1) @ G
+            self.accum[layer] += acc.to(device="cpu")
+            self.count[layer] += N
 
     def estimate(self, layer: int) -> torch.Tensor:
         if self.count[layer] == 0:
