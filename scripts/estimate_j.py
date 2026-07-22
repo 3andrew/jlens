@@ -21,8 +21,9 @@ import yaml
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from jlens.corpus import stream_batches
+from jlens.driver import probe_step
 from jlens.estimator import JEstimator
-from jlens.hooks import ResidualCapture, decoder_layers, freeze
+from jlens.hooks import decoder_layers, freeze
 
 
 def pick_device() -> torch.device:
@@ -37,29 +38,6 @@ def pick_dtype(name: str, device: torch.device) -> torch.dtype:
     if name != "auto":
         return getattr(torch, name)
     return torch.bfloat16 if device.type == "cuda" else torch.float32
-
-
-def probe_step(
-    model,
-    layer_indices: list[int],
-    input_ids: torch.Tensor,
-    est: JEstimator,
-) -> None:
-    """One estimation step: forward under capture, one backward, fold into est.
-
-    TODO(andrew): the Phase 1 inner loop. The steps:
-      1. Forward input_ids under ResidualCapture(model, layer_indices),
-         with use_cache=False (no attention mask needed: chunks are unpadded).
-      2. h_final is the capture at the deepest hooked layer.
-      3. Draw a fresh probe per batch element: v of shape (B, 1, d), same
-         device and dtype as h_final. The (B, 1, d) shape broadcasts against
-         every layer's (B, T, d) gradient inside est.update.
-      4. backward() on (h_final * v).sum().
-      5. est.update(v, cap.grads()).
-    No grad zeroing needed: weights are frozen and each step's captured
-    tensors are fresh objects.
-    """
-    raise NotImplementedError
 
 
 def main() -> None:
