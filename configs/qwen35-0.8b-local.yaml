@@ -1,0 +1,12 @@
+# J_l estimation — Qwen3.5-0.8B, local overnight run on MPS.
+model: Qwen/Qwen3.5-0.8B
+dtype: auto            # cuda -> bfloat16, mps/cpu -> float32
+seq_len: 512
+batch_size: 4
+n_prompts: 1000
+hook_stride: 1         # small model: hook every layer
+dataset: HuggingFaceFW/fineweb
+dataset_config: sample-10BT
+checkpoint_every: 200  # prompts between checkpoints
+out_dir: results/raw/estimate_j/qwen35-0.8b
+seed: 0
