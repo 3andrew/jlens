@@ -36,12 +36,12 @@ def test_probe_step_end_to_end():
     # Every (batch, position) pair counted, at every layer.
     assert est.count[1] == est.count[5] == steps * B * T
 
-    # Gate 1 invariant: J at the backward source converges to I. Effective
-    # sample count is steps*B distinct probes (positions share a probe),
-    # so expected rel err ~ sqrt(d/(steps*B)) ~ 0.17.
+    # Gate 1 invariant: J at the backward source converges to I. Per-position
+    # probes give steps*B*T independent directions, so expected rel err
+    # ~ sqrt((d+1)/(steps*B*T)) ~ 0.04.
     eye = torch.eye(D)
     ident_err = ((est.estimate(5) - eye).norm() / eye.norm()).item()
-    assert ident_err < 0.25, f"backward-source J far from I: {ident_err:.3f}"
+    assert ident_err < 0.1, f"backward-source J far from I: {ident_err:.3f}"
 
     # Upstream layers: finite, nonzero, and NOT identity (real layers act).
     for layer in (1, 3):

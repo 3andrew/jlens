@@ -3,10 +3,10 @@ model: Qwen/Qwen3.5-0.8B
 dtype: bfloat16
 seq_len: 512
 batch_size: 2
-n_prompts: 3000
+n_prompts: 100
 hook_stride: 1         # small model: hook every layer
 dataset: HuggingFaceFW/fineweb
 dataset_config: sample-10BT
-checkpoint_every: 200  # prompts between checkpoints
-out_dir: results/raw/estimate_j/qwen35-0.8b
+checkpoint_every: 40  # prompts between checkpoints
+out_dir: results/raw/estimate_j/qwen35-0.8b-smoke
 seed: 0

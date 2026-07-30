@@ -61,7 +61,10 @@ def main() -> None:
     if layer_indices[-1] != n_layers - 1:
         layer_indices.append(n_layers - 1)  # backward source must be hooked
     d_model = model.config.hidden_size
-    print(f"{n_layers} layers, hooking {len(layer_indices)}, d_model={d_model}")
+    print(
+        f"{n_layers} layers, hooking {len(layer_indices)}, d_model={d_model}",
+        flush=True,
+    )
 
     out = Path(cfg["out_dir"])
     out.mkdir(parents=True, exist_ok=True)
@@ -98,7 +101,7 @@ def main() -> None:
             checkpoint()
             last_ckpt = done
             rate = (done - start_done) / (time.time() - t0)
-            print(f"{done}/{cfg['n_prompts']} prompts  ({rate:.2f} prompts/s)")
+            print(f"{done}/{cfg['n_prompts']} prompts  ({rate:.2f} prompts/s)", flush=True)
 
     checkpoint()
     print(f"done: {done} prompts -> {out}")
