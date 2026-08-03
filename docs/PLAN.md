@@ -64,7 +64,11 @@ uv project, package skeleton, this plan. Gate passed: 10 CPU tests — hook
 capture/gradient flow on a tiny model, estimator convergence against a known
 Jacobian (all production shapes + bf16), checkpoint roundtrip.
 
-### Phase 1 — J_l estimation (the instrument)
+### Phase 1 — J_l estimation (the instrument) ✅ done
+Gates passed 2026-08-03 on Qwen3.5-0.8B (24 layers, d=1024, 3000 prompts,
+per-position probes): source identity err 0.026 (predicted 0.026), split-half
+r 0.956 (L0) to 0.9995 (L23). Estimand is the same-position Jacobian; see
+results/notes/2026-07-29-estimator-calibration.md.
 Stochastic estimator: freeze weights; one backward from v^T h_final per probe
 yields gradients at every hooked layer/position; accumulate rank-1 v g^T in fp32
 on CPU. ~25 hooked layers, ~1k FineWeb prompts, seq 512.

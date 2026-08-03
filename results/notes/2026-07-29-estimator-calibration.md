@@ -30,3 +30,15 @@ intrinsically noisier (pullback through 24 layers + cross-position variance).
 
 From smoke r values, r >= 0.95 at L0 needs ~2100 prompts. Full run set to
 3000 prompts (~2.5 h on M3 MPS at 0.34 prompts/s).
+
+## Run 3: full, 3000 prompts — GATES PASS (2026-08-03)
+
+M ~ 1.5M probes/layer. Source identity error 0.026 vs 0.0258 predicted —
+third consecutive match of sqrt((d+1)/M) across three orders of magnitude.
+Split-half r: 0.9555 (L0, tightest) to 0.9995 (L23); every layer passes.
+|J-I|/|I| declines smoothly ~1.0 -> 0.5 across depth, then 0.026 at source;
+no sharp cliff visible in this statistic. Run survived an overnight laptop
+sleep mid-flight (process suspended and resumed; checkpoints intact).
+Ops note: cumulative rate print is misleading after stalls; HF stream
+timeouts ('timed out', 'Retrying') never matched the monitor grep — widen
+filters for future runs.
