@@ -45,10 +45,17 @@ class ResidualCapture:
     `releaf=False`.
     """
 
-    def __init__(self, model: nn.Module, layer_indices: list[int], releaf: bool = True):
+    def __init__(
+        self,
+        model: nn.Module,
+        layer_indices: list[int],
+        releaf: bool = True,
+        grads: bool = True,
+    ):
         self.layers = decoder_layers(model)
         self.indices = sorted(layer_indices)
-        self.releaf_at = self.indices[0] if releaf else None
+        self.grads_enabled = grads
+        self.releaf_at = self.indices[0] if releaf and grads else None
         self.captured: dict[int, torch.Tensor] = {}
         self._handles: list[torch.utils.hooks.RemovableHandle] = []
 
@@ -62,7 +69,8 @@ class ResidualCapture:
                 hidden = hidden.detach().requires_grad_(True)
                 self.captured[idx] = hidden
                 return (hidden, *output[1:]) if is_tuple else hidden
-            hidden.retain_grad()
+            if self.grads_enabled:
+                hidden.retain_grad()
             self.captured[idx] = hidden
             return output
 
