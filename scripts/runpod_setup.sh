@@ -7,6 +7,9 @@ set -euo pipefail
 export HF_HOME=${HF_HOME:-/workspace/hf}
 grep -q HF_HOME ~/.bashrc || echo "export HF_HOME=$HF_HOME" >> ~/.bashrc
 
+# Minimal container images lack tmux; the run must survive SSH drops.
+apt-get update -qq && apt-get install -y -qq tmux rsync || true
+
 pip install -e .
 
 # Qwen3.5 fast-path kernels (hybrid linear-attention/conv blocks). If either
