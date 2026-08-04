@@ -39,7 +39,6 @@ def setup():
     return JLens(model, est), cap.captured, out.logits
 
 
-@pytest.mark.xfail(reason="JLens.readout is the [Andrew writes] TODO", strict=False)
 def test_identity_readout_matches_model_logits(setup):
     lens, captured, logits = setup
     h_final = captured[5]
@@ -48,7 +47,6 @@ def test_identity_readout_matches_model_logits(setup):
     assert torch.allclose(ours, logits.float(), atol=1e-4)
 
 
-@pytest.mark.xfail(reason="JLens.readout is the [Andrew writes] TODO", strict=False)
 def test_j_readout_differs_at_early_layer(setup):
     lens, captured, _ = setup
     h = captured[1]
@@ -58,7 +56,14 @@ def test_j_readout_differs_at_early_layer(setup):
     assert not torch.allclose(with_j, without_j, atol=1e-2)
 
 
-@pytest.mark.xfail(reason="JLens.readout is the [Andrew writes] TODO", strict=False)
+def test_readout_accepts_bf16_activations(setup):
+    """Production activations arrive as bf16 from MPS/CUDA capture."""
+    lens, captured, _ = setup
+    ours = lens.readout(captured[1].bfloat16(), layer=1)
+    assert ours.dtype == torch.float32
+    assert torch.isfinite(ours).all()
+
+
 def test_topk_returns_decoded_tokens(setup):
     lens, captured, _ = setup
 

@@ -39,7 +39,9 @@ class JLens:
         self.j = {layer: est.estimate(layer) for layer in est.accum}
         norm = final_norm(model)
         self.norm_w = norm.weight.detach().float().cpu()
-        self.norm_eps = norm.variance_epsilon
+        # RMSNorm epsilon attribute name varies by model family.
+        eps = getattr(norm, "variance_epsilon", None)
+        self.norm_eps = eps if eps is not None else norm.eps
         self.w_u = model.lm_head.weight.detach().float().cpu()  # (V, d)
 
     def readout(
@@ -57,7 +59,19 @@ class JLens:
         tests/test_lens.py defines the contract: at the backward-source layer
         (J ~ I) the readout must match the model's own logits.
         """
-        raise NotImplementedError
+        h = h.float().cpu()
+        x = h
+        if not identity:
+            x = h @ self.j[layer].transpose(0, 1)
+
+        x = (
+            x
+            / torch.sqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.norm_eps)
+            * self.norm_w
+        )
+        x = x @ self.w_u.transpose(0, 1)
+
+        return x
 
     def topk(
         self,
