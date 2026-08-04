@@ -1,0 +1,12 @@
+# J_l estimation — Qwen3.5-9B on a RunPod GPU (A100/L40S class).
+model: Qwen/Qwen3.5-9B
+dtype: bfloat16
+seq_len: 512
+batch_size: 8
+n_prompts: 6000
+hook_stride: 2         # ~40+ layers at d~4096: every other layer + the last
+dataset: HuggingFaceFW/fineweb
+dataset_config: sample-10BT
+checkpoint_every: 200
+out_dir: results/raw/estimate_j/qwen35-9b
+seed: 0
