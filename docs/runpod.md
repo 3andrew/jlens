@@ -5,8 +5,9 @@
 - GPU: A100 80GB (~$1.6-2/hr) is the comfortable choice; L40S 48GB (~$1/hr)
   works with batch_size lowered to 4.
 - Template: any official RunPod PyTorch image (CUDA torch preinstalled).
-- Attach a network volume mounted at /workspace (holds the HF model cache and
-  raw results across pod restarts).
+- Storage: container disk 30GB; volume disk 80GB mounted at /workspace
+  (default). The volume holds the HF model cache (~19GB for the 9B) plus
+  checkpoints (~1.6GB each at d~4096) and survives pod stop/start.
 
 ## Setup (once per pod)
 

@@ -7,6 +7,6 @@ n_prompts: 6000
 hook_stride: 2         # ~40+ layers at d~4096: every other layer + the last
 dataset: HuggingFaceFW/fineweb
 dataset_config: sample-10BT
-checkpoint_every: 200
+checkpoint_every: 500  # ~1.6GB per checkpoint at d~4096; 12 ckpts ~ 19GB
 out_dir: results/raw/estimate_j/qwen35-9b
 seed: 0
