@@ -21,7 +21,9 @@ bash scripts/runpod_setup.sh
 ## Run (inside tmux — SSH drops must not kill the run)
 
 ```bash
-tmux new -s jlens
+# TERM override: fancy terminals (Ghostty, kitty) advertise TERM values the
+# pod's terminfo lacks, and tmux refuses to start.
+TERM=xterm-256color tmux new -s jlens
 python scripts/estimate_j.py configs/qwen35-9b-runpod.yaml 2>&1 | tee run.log
 # detach: Ctrl-b d   reattach: tmux attach -t jlens
 ```
