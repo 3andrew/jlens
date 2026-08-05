@@ -1,4 +1,4 @@
-"""The J-estimation inner loop, shared by driver scripts and tests."""
+"""The J-estimation inner loop and device helpers, shared by scripts and tests."""
 
 from __future__ import annotations
 
@@ -6,6 +6,20 @@ import torch
 
 from jlens.estimator import JEstimator
 from jlens.hooks import ResidualCapture
+
+
+def pick_device() -> torch.device:
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
+def pick_dtype(name: str, device: torch.device) -> torch.dtype:
+    if name != "auto":
+        return getattr(torch, name)
+    return torch.bfloat16 if device.type in ("cuda", "mps") else torch.float32
 
 
 def probe_step(

@@ -21,23 +21,9 @@ import yaml
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from jlens.corpus import stream_batches
-from jlens.driver import probe_step
+from jlens.driver import pick_device, pick_dtype, probe_step
 from jlens.estimator import JEstimator
 from jlens.hooks import decoder_layers, freeze
-
-
-def pick_device() -> torch.device:
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    if torch.backends.mps.is_available():
-        return torch.device("mps")
-    return torch.device("cpu")
-
-
-def pick_dtype(name: str, device: torch.device) -> torch.dtype:
-    if name != "auto":
-        return getattr(torch, name)
-    return torch.bfloat16 if device.type == "cuda" else torch.float32
 
 
 def main() -> None:

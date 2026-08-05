@@ -32,8 +32,11 @@ def prompts_of(path: Path) -> int:
 
 
 def pearson(a: torch.Tensor, b: torch.Tensor) -> float:
-    a = a.flatten() - a.flatten().mean()
-    b = b.flatten() - b.flatten().mean()
+    # float64: fp32 dot products over d^2-element vectors drift past |r|=1.
+    a = a.flatten().double()
+    b = b.flatten().double()
+    a = a - a.mean()
+    b = b - b.mean()
     return (a @ b / (a.norm() * b.norm())).item()
 
 

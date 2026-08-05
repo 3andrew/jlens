@@ -20,6 +20,7 @@ import torch
 import yaml
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from jlens.driver import pick_device, pick_dtype
 from jlens.estimator import JEstimator
 from jlens.hooks import ResidualCapture, freeze
 from jlens.lens import JLens
@@ -48,9 +49,11 @@ def main() -> None:
     args = parser.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
 
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    device = pick_device()
     tokenizer = AutoTokenizer.from_pretrained(cfg["model"])
-    model = AutoModelForCausalLM.from_pretrained(cfg["model"], dtype=torch.bfloat16)
+    model = AutoModelForCausalLM.from_pretrained(
+        cfg["model"], dtype=pick_dtype("auto", device)
+    )
     freeze(model).to(device)
 
     ckpt = latest_checkpoint(Path(cfg["out_dir"]))
